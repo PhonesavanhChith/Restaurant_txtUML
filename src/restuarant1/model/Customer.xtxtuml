@@ -1,0 +1,93 @@
+package restuarant.model;
+
+import hu.elte.txtuml.api.model.Signal;
+
+
+signal GetMenu{};
+signal Payment{};
+signal GetFood{};
+signal Leaving{};
+class Customer {
+	int price;
+	initial OpenDoor;
+	state Waiting;
+	state OrderSteak;
+	state OrderSalad;
+	state OrderNoodle;
+	choice StartSelection;
+	choice SaladOrNoodle;
+	state Paying;
+	state Eating;
+	state DoorClose;
+	
+	transition Initialize {
+		from OpenDoor;
+		to Waiting;
+	}
+	transition Waiting_Waiter {
+		from Waiting;
+		to StartSelection;
+		trigger GetMenu; 
+		
+		}
+	
+	transition StartSelection_SaladNoodle {
+		from StartSelection;
+		to SaladOrNoodle;
+		guard (else);
+		
+	}
+
+	transition StartSelection_OrderSteak {
+		from StartSelection;
+		to OrderSteak;
+		guard(price >=900);
+		
+	}
+	
+	transition SaladOrNoodle_OrderNoodle {
+		from SaladOrNoodle;
+		to OrderNoodle;
+		guard(else );
+		
+		}
+		
+		transition StartSelection_OrderSalad {
+		from SaladOrNoodle;
+		to OrderSalad;
+		guard(price >= 600);
+		
+}
+
+transition Paying_Salad {
+		from OrderSalad;
+		to Paying;
+		trigger Payment;
+		
+		}
+
+transition Paying_Steak {
+		from OrderSteak;
+		to Paying;
+		trigger Payment;
+		
+		}
+transition Paying_Noodle {
+		from OrderNoodle;
+		to Paying;
+		trigger Payment;
+		
+		}
+transition Eating_Food {
+		from Paying;
+		to Eating;
+		trigger GetFood;
+		
+		}
+transition Left_Restuarant {
+		from Eating;
+		to DoorClose;
+		trigger Leaving;
+		
+		}
+}
